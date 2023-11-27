@@ -1,0 +1,10 @@
+- name: Create a directory if does not exist
+  file:
+    path: /home/JPytlinski/nginx
+    state: directory
+
+- name: upload website code from template
+
+  template:
+    src: roles/templates/webpage.html.j2
+    dest: /home/JPytlinski/nginx/index.html

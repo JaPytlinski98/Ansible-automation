@@ -1,0 +1,13 @@
+
+- name: pull image from repo
+  community.docker.docker_image:
+    name: nginx
+    source: pull
+
+- name: start the container
+  community.docker.docker_container:
+    name: "{{ container_name }}"
+    image: nginx
+    state: started
+    published_ports: 8080:80
+    volumes: /home/JPytlinski/nginx:/usr/share/nginx/html
