@@ -3,4 +3,4 @@
   become: true
   roles:
     # setup new server
-    -role: roles
+    - role: roles

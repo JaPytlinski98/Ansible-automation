@@ -1,5 +1,4 @@
 ---
----
 - name: upload ssh key for user
   ansible.posix.authorized_key:
     user: "{{ created_username }}"

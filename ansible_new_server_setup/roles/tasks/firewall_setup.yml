@@ -2,12 +2,13 @@
 - name: allow all port 8080 connections
   community.general.ufw:
     rule: allow
-    name: open_8080
+    port: 8080
+    protocol: tcp
 
 - name: allow all ssh connections
   community.general.ufw:
     rule: allow
-    name: open_ssh
+    name: OpenSSH
 
 - name: enable firewall and deny all traffic by default 
   community.general.ufw:
