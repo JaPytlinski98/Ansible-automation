@@ -1,3 +1,4 @@
+---
   container_name: nginx_server
   page_title: Ansible automation
   page_description: Docker container deployed using ansible

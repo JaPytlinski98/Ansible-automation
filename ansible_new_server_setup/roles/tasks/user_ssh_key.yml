@@ -1,0 +1,7 @@
+---
+---
+- name: upload ssh key for user
+  ansible.posix.authorized_key:
+    user: "{{ created_username }}"
+    state: present 
+    key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_rsa.pub') }}" 

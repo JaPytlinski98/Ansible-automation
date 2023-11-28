@@ -1,4 +1,4 @@
-
+---
 - name: pull image from repo
   community.docker.docker_image:
     name: nginx

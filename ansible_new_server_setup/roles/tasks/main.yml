@@ -1,0 +1,12 @@
+---
+- name: system update and aptitude installation
+  import_tasks: install_aptitude.yml
+
+- name: create user specified in vars
+  import_tasks: user_create.yml
+
+- name: adding remote host ssh key 
+  import_tasks: user_ssh_key.yml
+
+- name: system update and aptitude installation
+  import_tasks: firewall_setup.yml

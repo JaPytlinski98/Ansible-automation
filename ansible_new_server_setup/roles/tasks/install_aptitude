@@ -1,0 +1,10 @@
+---
+    - name: Update host OS
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true

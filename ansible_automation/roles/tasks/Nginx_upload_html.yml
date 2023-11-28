@@ -1,3 +1,4 @@
+---
 - name: Create a directory if does not exist
   file:
     path: /home/JPytlinski/nginx
