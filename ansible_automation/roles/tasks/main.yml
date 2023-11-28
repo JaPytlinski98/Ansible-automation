@@ -1,4 +1,7 @@
 ---
+- name: Install Docker
+  import_tasks: Install_Docker.yaml
+
 - name: Copy webpage with template
   import_tasks: Nginx_upload_html.yml
 
