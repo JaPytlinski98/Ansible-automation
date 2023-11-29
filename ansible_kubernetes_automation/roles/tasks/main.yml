@@ -1,0 +1,14 @@
+---
+- name: Install docker
+  import_tasks: install_docker.yml 
+
+- name: Install k8s 
+  import_tasks: install_kubernetes.yml
+
+- name: Initialize k8s on master 
+  when: inventory_hostname in groups['k8s_master']
+  import_tasks: ubutuakuze_kubernetes_master.yml
+
+- name: Initialize k8s on nodes
+  when: inventory_hostname in groups['nodes']
+  import_tasks: initialize_kubernetes_node.yml

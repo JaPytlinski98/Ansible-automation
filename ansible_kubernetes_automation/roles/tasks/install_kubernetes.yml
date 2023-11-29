@@ -1,0 +1,29 @@
+--- 
+- name: Add k8s GPG key 
+  apt_key: 
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present 
+
+- name: Add k8s repo 
+  apt_repository: 
+    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+    state: present 
+    filename: kubernetes.list
+
+- name: Install k8s packages
+  apt: 
+    name: "{{ packages_k8s }}" 
+    state: present
+    update_cache: yes
+
+- name: Configure node ip
+  lineinfile:
+  path: /etc/default/kubelet
+  line: KUBELET_EXTRA_ARGS=--node-ip={{ ansible_default_ipv4.address }}
+
+- name: Restart kubelet
+  service:
+    name: kubelet 
+    daemon_reload: yes
+    state: restarted
+
