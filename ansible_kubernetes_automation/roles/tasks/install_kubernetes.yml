@@ -1,25 +1,45 @@
 --- 
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: "{{ item }}"
+    fstype: swap
+    state: absent
+  with_items:
+    - swap
+    - none
+
+- name: Disable swap
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
 - name: Add k8s GPG key 
-  apt_key: 
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    state: present 
+  shell: |
+          sudo apt-get update
+          sudo apt-get install -y apt-transport-https ca-certificates curl gpg
+          curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
-- name: Add k8s repo 
-  apt_repository: 
-    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
-    state: present 
-    filename: kubernetes.list
+- name: Add k8s repo and install kubelet, kubeadm and kubectl 
+  shell: | 
+          echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+          sudo apt-get update
+          sudo apt-get install -y kubelet kubeadm kubectl
 
-- name: Install k8s packages
-  apt: 
-    name: "{{ packages_k8s }}" 
-    state: present
-    update_cache: yes
+- name: Delete config.toml for kubeadm to work
+  file:
+    path: /etc/containerd/config.toml
+    state: absent
+
+- name: Restart containerd
+  systemd_service:
+    state: restarted
+    daemon_reload: true
+    name: containerd
 
 - name: Configure node ip
   lineinfile:
-  path: /etc/default/kubelet
-  line: KUBELET_EXTRA_ARGS=--node-ip={{ ansible_default_ipv4.address }}
+    path: /etc/default/kubelet
+    line: KUBELET_EXTRA_ARGS=--node-ip={{ ansible_default_ipv4.address }}
+    create: yes
 
 - name: Restart kubelet
   service:

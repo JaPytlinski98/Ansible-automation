@@ -1,24 +1,19 @@
 --- 
-- name: Install system packages for Docker
-  apt: 
-    name: "{{ packages_for_docker }}"
-    state: present 
-    uptade_cache: yes
+- name: Set Docker GPG key 
+  shell: |
+          sudo apt-get update
+          sudo apt-get install ca-certificates curl gnupg
+          sudo install -m 0755 -d /etc/apt/keyrings
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+          sudo chmod a+r /etc/apt/keyrings/docker.gpg
 
-- name: Add Docker GPG apt Key
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    state: present
+- name: Add Docker repo
+  shell: |
+          echo \
+          "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+          $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+          sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          sudo apt-get update
 
-- name: Add Docker Repo
-  apt_repository:
-    repo: deb https://download.docker.com/linux/ubuntu xenial stable
-    state: present
-
-- name: Install Docker
-  apt:
-    name: "{{ packages_docker }}"
-    state: present 
-    update_cache: yes
-
-
+- name: Install Docker packages
+  command: sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
