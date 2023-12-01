@@ -1,6 +1,6 @@
 ---
 - name: Initialize k8s cluster on master node only
-  command: kubeadm init --pod-network-cidr=172.0.0.0/8
+  command: kubeadm init --pod-network-cidr=10.244.0.0/16
 
 - name: Setup kubeconfig for JPytlinski user
   command: "{{ item }}"
@@ -8,6 +8,10 @@
     - mkdir -p /home/JPytlinski/.kube
     - cp -i /etc/kubernetes/admin.conf /home/JPytlinski/.kube/config
     - chown JPytlinski:JPytlinski /home//JPytlinski/.kube/config
+
+- name: Install Flannel on Master
+  when: inventory_hostname in groups['k8s_master']
+  command: kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
 
 - name: Generate join command 
   command: kubeadm token create --print-join-command
