@@ -9,6 +9,6 @@
   when: inventory_hostname in groups['k8s_master']
   import_tasks: initialize_kubernetes_master.yml
 
-#- name: Initialize k8s on nodes
-#  when: inventory_hostname in groups['nodes']
-#  import_tasks: initialize_kubernetes_node.yml
+- name: Initialize k8s on nodes
+  when: inventory_hostname in groups['nodes']
+  import_tasks: initialize_kubernetes_node.yml

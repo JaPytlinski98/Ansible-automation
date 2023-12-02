@@ -3,16 +3,14 @@
   command: kubeadm init --pod-network-cidr=10.244.0.0/16
 
 - name: Setup kubeconfig for JPytlinski user
+  become: yes
+  become_user: "{{ ansible_env.USER }}"
   command: "{{ item }}"
   with_items:
-    - mkdir -p /home/JPytlinski/.kube
-    - cp -i /etc/kubernetes/admin.conf /home/JPytlinski/.kube/config
-    - chown JPytlinski:JPytlinski /home//JPytlinski/.kube/config
-
-- name: Install Flannel on Master
-  when: inventory_hostname in groups['k8s_master']
-  command: kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
-
+    - mkdir -p "{{ ansible_env.HOME }}/.kube"
+    - cp -i /etc/kubernetes/admin.conf "{{ ansible_env.HOME }}/.kube/config"
+    - chown "{{ ansible_env.USER }}:{{ ansible_env.USER }}" "{{ ansible_env.HOME }}/.kube/config"
+    
 - name: Generate join command 
   command: kubeadm token create --print-join-command
   register: join_command
